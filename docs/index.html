@@ -6,7 +6,7 @@
   <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DenseCap: Fully Convolutional Localization Networks for Dense Captioning</title>
+  <title>A Perceptual Prediction Framework for Self Supervised Event Segmentation</title>
 
   <!-- bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -33,7 +33,7 @@
   <a href="http://www.usf.edu/">
     <img src="files/images/USF.jpg" style="height:50px; float: right; margin-right: 20px; ">
   </a>
-  <center><h1>Event Understanding</h1></center>
+  <center><h1>A Perceptual Prediction Framework for Self Supervised Event Segmentation</h1></center>
 
   <div style="clear:both;"></div>
 </div>
@@ -102,47 +102,14 @@
 </div>
 
 <div class="container sec">
-  <h2>Example Results: Dense Captioning</h2>
+  <h2>Example Results</h2>
 
-  Example predictions from the model. We slightly cherry picked images in favor of high-resolution, rich scenes and no toilets.
-  <br>
-  Browse the <b>full results</b> on our interactive <a href="browser">predictions visualizer page</a> (30MB) (visualizer code also included on Github).
-  <br><br>
-
-  <div id="gallery">
-    <div class="egimg"><img src="eg/p1.jpeg"></div>
-    <div class="egimg"><img src="eg/p8.jpeg"></div>
-    <div class="egimg"><img src="eg/p9.jpeg"></div>
-
-    <div class="egimg"><img src="eg/p3.jpeg"></div>
-    <div class="egimg"><img src="eg/p4.jpeg"></div>
-    <div class="egimg"><img src="eg/p6.jpeg"></div>
-
-    <div class="egimg"><img src="eg/p10.jpeg"></div>
-    <div class="egimg"><img src="eg/p7.jpeg"></div>
-    <div class="egimg"><img src="eg/p14.jpeg"></div>
-
-    <div class="egimg"><img src="eg/p17.jpeg"></div>
-    <div class="egimg"><img src="eg/p18.jpeg"></div>
-    <div class="egimg"><img src="eg/p2.jpeg"></div>
-    
-    <div class="egimg"><img src="eg/p15.jpeg"></div>
-    <div class="egimg"><img src="eg/p13.jpeg"></div>
-    <div class="egimg"><img src="eg/p16.jpeg"></div>
+  Visualizations of the approach when presented with a video. The input frame is shown at the top, the gradient of the prediction error in the middle and a key frame from the segmented event at the bottom.
 
 
-    <div class="egimg"><img src="eg/p12.jpeg"></div>
-    <div class="egimg"><img src="eg/p11.jpeg"></div>
-    <div class="egimg"><img src="eg/p19.jpeg"></div>
-  </div>
-
+  
 </div>
 
-<div class="container sec">
-  <h2>Example Results: Region Search</h2>
-  The DenseCap model can also be easily run "backwards" to search for text queries. For example, we can take arbitrary descriptions such as "<i>head of a giraffe</i>" and look through a collection of images to find regions that are likely to generate that description. Note that in this process we do not merely caption images and then look for string overlaps; Instead we forward the model and check the probability of generating the query condiditoned on every detected region of interest. Below are some examples of searching for a few queries in our test set:<br><br>
-  <img src="retrieval.jpeg">
-</div>
 
 <!-- jQuery and Boostrap -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
