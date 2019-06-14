@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DenseCap: Fully Convolutional Localization Networks for Dense Captioning</title>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  <!-- Google fonts -->
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+  <!-- Google Analytics -->
+  <link rel="stylesheet" type="text/css" href="style.css" />
+
+  <script>
+  function page_loaded() {
+  }
+  </script>
+</head>
+
+<body onload="page_loaded()">
+
+<div id="header">
+  <a href="http://marathon.csee.usf.edu/">
+    <img src="files/images/GroupLogo.png" style="width:200px; float: left; margin-left: 20px; margin-top: 20px;">
+  </a>
+  <a href="http://www.usf.edu/">
+    <img src="files/images/USF.jpg" style="height:50px; float: right; margin-right: 20px; ">
+  </a>
+  <center><h1>Event Understanding</h1></center>
+
+  <div style="clear:both;"></div>
+</div>
+
+<!--
+<div id="teaser">
+</div>
+-->
+
+<div class="sechighlight">
+<div class="container sec">
+  <h2>Abstract</h2>
+
+  <div id="coursedesc">
+    Temporal segmentation of long videos is an important problem, that has largely been tackled through supervised learning, often requiring large amounts of annotated training data. In this paper, we tackle the problem of selfsupervised temporal segmentation that alleviates the need for any supervision in the form of labels (full supervision) or temporal ordering (weak supervision). We introduce a self-supervised, predictive learning framework that draws inspiration from cognitive psychology to segment long, visually complex videos into constituent events. Learning involves only a single pass through the training data. We also introduce a new adaptive learning paradigm that helps reduce the effect of catastrophic forgetting in recurrent neural networks. Extensive experiments on three publicly available datasets - Breakfast Actions, 50 Salads, and INRIA Instructional Videos datasets show the efficacy of the proposed approach. We show that the proposed approach outperforms weakly-supervised and unsupervised baselines by up to 24% and achieves competitive segmentation results compared to fully supervised baselines with only a single pass through the training data. Finally, we show that the proposed self-supervised learning paradigm learns highly discriminating features to improve action recognition.
+  </div>
+</div>
+</div>
+
+<div class="container sec">
+
+<div>
+  <div class="instructor">
+    <a href="http://saakur.github.io/">
+    <div>Sathyanarayanan Aakur</div>
+    </a>
+  </div>
+  <div class="instructor">
+    <a href="http://saakur.github.io/">
+    <div>Sudeep Sarkar</div>
+    </a>
+  </div>
+</div>
+
+<div style="color:#900;">
+  To appear in CVPR 2019
+</div>
+
+</div>
+
+<div class="sechighlight">
+<div class="container sec" style="font-size:18px">
+  <div class="row">
+
+    <div class="col-md-5">
+      <h2>Code and Extras</h2>
+      <ul>
+        <li>Find training/evaluation code on  <a href="https://github.com/CVPRUSFTampa/EventSegmentation">Github</a>.</li>
+        <li>Find the paper <a href="https://arxiv.org/pdf/1811.04869.pdf">here</a></li>
+      </ul>
+    </div>
+    <div class="col-md-7">
+      <h2>Bibtex</h2>
+<pre style="font-size:12px;">
+@article{aakur2018perceptual,
+  title={A Perceptual Prediction Framework for Self Supervised Event Segmentation},
+  author={Aakur, Sathyanarayanan N and Sarkar, Sudeep},
+  journal={arXiv preprint arXiv:1811.04869},
+  year={2018}
+}
+</pre>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="container sec">
+  <h2>Example Results: Dense Captioning</h2>
+
+  Example predictions from the model. We slightly cherry picked images in favor of high-resolution, rich scenes and no toilets.
+  <br>
+  Browse the <b>full results</b> on our interactive <a href="browser">predictions visualizer page</a> (30MB) (visualizer code also included on Github).
+  <br><br>
+
+  <div id="gallery">
+    <div class="egimg"><img src="eg/p1.jpeg"></div>
+    <div class="egimg"><img src="eg/p8.jpeg"></div>
+    <div class="egimg"><img src="eg/p9.jpeg"></div>
+
+    <div class="egimg"><img src="eg/p3.jpeg"></div>
+    <div class="egimg"><img src="eg/p4.jpeg"></div>
+    <div class="egimg"><img src="eg/p6.jpeg"></div>
+
+    <div class="egimg"><img src="eg/p10.jpeg"></div>
+    <div class="egimg"><img src="eg/p7.jpeg"></div>
+    <div class="egimg"><img src="eg/p14.jpeg"></div>
+
+    <div class="egimg"><img src="eg/p17.jpeg"></div>
+    <div class="egimg"><img src="eg/p18.jpeg"></div>
+    <div class="egimg"><img src="eg/p2.jpeg"></div>
+    
+    <div class="egimg"><img src="eg/p15.jpeg"></div>
+    <div class="egimg"><img src="eg/p13.jpeg"></div>
+    <div class="egimg"><img src="eg/p16.jpeg"></div>
+
+
+    <div class="egimg"><img src="eg/p12.jpeg"></div>
+    <div class="egimg"><img src="eg/p11.jpeg"></div>
+    <div class="egimg"><img src="eg/p19.jpeg"></div>
+  </div>
+
+</div>
+
+<div class="container sec">
+  <h2>Example Results: Region Search</h2>
+  The DenseCap model can also be easily run "backwards" to search for text queries. For example, we can take arbitrary descriptions such as "<i>head of a giraffe</i>" and look through a collection of images to find regions that are likely to generate that description. Note that in this process we do not merely caption images and then look for string overlaps; Instead we forward the model and check the probability of generating the query condiditoned on every detected region of interest. Below are some examples of searching for a few queries in our test set:<br><br>
+  <img src="retrieval.jpeg">
+</div>
+
+<!-- jQuery and Boostrap -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
