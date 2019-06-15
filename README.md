@@ -40,12 +40,13 @@ Code for the paper A Perceptual Prediction Framework for Self Supervised Event S
   
   Note: The original script was written in Tensorflow 1.3. Newer versions of Tensorflow and Python have shown variations in performance. Running this script should lead to the reported accuracy of 42.8% MoF on Breakfast Actions.
 
-Please cite if this has been useful:
+Please consider citing if this has been useful:
 ```
-@article{aakur2018perceptual,
-  title={A Perceptual Prediction Framework for Self Supervised Event Segmentation},
-  author={Aakur, Sathyanarayanan N and Sarkar, Sudeep},
-  journal={arXiv preprint arXiv:1811.04869},
-  year={2018}
+@InProceedings{Aakur_2019_CVPR,
+author = {Aakur, Sathyanarayanan N. and Sarkar, Sudeep},
+title = {A Perceptual Prediction Framework for Self Supervised Event Segmentation},
+booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+month = {June},
+year = {2019}
 }
 ```
