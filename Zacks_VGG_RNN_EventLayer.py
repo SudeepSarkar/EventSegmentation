@@ -242,6 +242,7 @@ train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(s
 ### Training loop ###
 #####################
 
+tf.global_variables() 
 init = tf.compat.v1.global_variables_initializer()
 
 saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
