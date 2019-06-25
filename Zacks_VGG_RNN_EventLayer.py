@@ -13,12 +13,12 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 
 import numpy as np
-#import os
+import os
 from os import listdir
 from os.path import isfile, join, isdir
-#from random import shuffle, choice
+from random import shuffle, choice
 from PIL import Image
-#import sys
+import sys
 import json
 import collections, cv2
 
@@ -43,14 +43,14 @@ def loadData(jsonData, inPath):
     for vid in jsonData.keys():
         # VIRAT format
         # dirName = '_'.join(vid.split('.')[0].split('_')[2:])
-        
+
         # Other dataset file name format
         dirName = ''.join(vid.split('.')[0])
         # print(dirName)
         vidPath = join(inPath,dirName)
         #print(vidPath)
         #batchPaths = batchPaths + sorted([str(join(vidPath, f) + '/') for f in listdir(vidPath) if isdir(join(vidPath, f))])
-        
+
         # Breakfast Actions
         batchPaths = batchPaths + [vidPath]
         #print(batchPaths)
@@ -71,7 +71,7 @@ def loadMiniBatch(vidFilePath):
             img = Image.open(imFile)
             img = img.resize((input_width, input_height), Image.ANTIALIAS)
             img = np.array(img)
-            img = img[:, :, ::-1].copy() 
+            img = img[:, :, ::-1].copy()
             img = cv2.GaussianBlur(img,(5,5),0)
             im.append(img)
             numFrames += 1
@@ -164,27 +164,27 @@ batch = loadData(jsonData, vidPath)
 
 # ----------------------------------------------------- #
 # declaring the variables that will be needed
-inputs = tf.placeholder(tf.float32, (None, 224, 224, 3), name='inputs')
-learning_rate = tf.placeholder(tf.float32, [])
-is_training = tf.placeholder(tf.bool)
+inputs = tf.compat.v1.placeholder(tf.float32, (None, 224, 224, 3), name='inputs')
+learning_rate = tf.compat.v1.placeholder(tf.float32, [])
+is_training = tf.compat.v1.placeholder(tf.bool)
 
 # Setup RNN
-# init_state1 = tf.placeholder(tf.float32, [1, n_hidden1])
+# init_state1 = tf.compat.v1.placeholder(tf.float32, [1, n_hidden1])
 # W_RNN1 = vs.get_variable("W1", shape=[feature_size+n_hidden1, n_hidden1])
 # b_RNN1 = vs.get_variable("b1", shape=[n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
 # curr_state1 = init_state1
 
 # Setup LSTM
-init_state1 = tf.placeholder(tf.float32, [1, 2*n_hidden1], name="State")
+init_state1 = tf.compat.v1.placeholder(tf.float32, [1, 2*n_hidden1], name="State")
 W_lstm1 = vs.get_variable("W1", shape=[feature_size + n_hidden1, 4*n_hidden1])
 b_lstm1 = vs.get_variable("b1", shape=[4*n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
 # curr_state1 = broadcast(init_state1, [tf.shape(xs)[0], 2*n_hidden1])
 curr_state1 = init_state1
 
-W_fc1 = tf.Variable(tf.truncated_normal([n_hidden1, feature_size], stddev=0.1))
+W_fc1 = tf.Variable(tf.random.truncated_normal([n_hidden1, feature_size], stddev=0.1))
 b_fc1 = tf.Variable(tf.constant(0.1, shape=[feature_size]))
 # ----------------------------------------------------- #
-#             SETTING UP VGG 
+#             SETTING UP VGG
 scope = 'vgg_16'
 fc_conv_padding = 'VALID'
 dropout_keep_prob = 0.8
@@ -193,7 +193,7 @@ r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
 
-with tf.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
+with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
     end_points_collection = sc.original_name_scope + '_end_points'
     # Collect outputs for conv2d, fully_connected and max_pool2d.
     with slim.arg_scope([slim.conv2d, slim.fully_connected, slim.max_pool2d],
@@ -235,21 +235,21 @@ sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
 
 # Optimization
-train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
+train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
 
 
 #####################
 ### Training loop ###
 #####################
 
-init = tf.global_variables_initializer()
+init = tf.compat.v1.global_variables_initializer()
 
-saver = tf.train.Saver(tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
+saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
 with tf.Session() as sess:
     # Initialize parameters
     sess.run(init)
     #saver.restore(sess, "./vgg_16.ckpt")
-    saver = tf.train.Saver(max_to_keep=0)
+    saver = tf.compat.v1.train.Saver(max_to_keep=0)
     avgPredError = 1.0
 
     ### In case of interruption, load parameters from the last iteration (ex: 29)
@@ -270,7 +270,7 @@ with tf.Session() as sess:
         shuffle(batch)
 
         for miniBatchPath in batch:
-            
+
             # RNN
             # new_state = np.random.uniform(-0.5,high=0.5,size=(1,n_hidden1))
 
