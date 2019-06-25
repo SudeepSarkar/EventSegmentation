@@ -264,25 +264,20 @@ with tf.compat.v1.Session() as sess:
 
     # LSTM
     new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
-
     for i in range(n_epochs):
         # Run 1 epoch
         loss = []
 		#shuffle the sequences
         shuffle(batch)
-
         for miniBatchPath in batch:
-
             # RNN
             # new_state = np.random.uniform(-0.5,high=0.5,size=(1,n_hidden1))
-
             # LSTM
             new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
-
             avgPredError = 0
-            vidName, minibatches = loadMiniBatch(miniBatchPath)
-            segCount = 0
-            predError = collections.deque(maxlen=30)
+			vidName, minibatches = loadMiniBatch(miniBatchPath)
+			segCount = 0
+			predError = collections.deque(maxlen=30)
 			print('Video:', vidName)
 			print( vgg16_Features[1,:])
 			for x_train in minibatches:
