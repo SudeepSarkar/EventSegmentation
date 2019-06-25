@@ -161,7 +161,7 @@ else:
 # creates a list of all the file names by concatenating the directory names
 # in vidPath and jsonData and the files therein
 batch = loadData(jsonData, vidPath)
-tf.reset_default_graph() 
+tf.compat.v1.reset_default_graph()
 # ----------------------------------------------------- #
 # declaring the variables that will be needed
 inputs = tf.compat.v1.placeholder(tf.float32, (None, 224, 224, 3), name='inputs')
@@ -244,7 +244,7 @@ train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(s
 
 init = tf.compat.v1.global_variables_initializer()
 
-saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKey.GLOBAL_VARIABLES, scope="vgg_16"))
+saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
 with tf.compat.v1.Session() as sess:
     # Initialize parameters
     sess.run(init)
