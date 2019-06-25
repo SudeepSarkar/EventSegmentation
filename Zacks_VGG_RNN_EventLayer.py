@@ -284,7 +284,7 @@ with tf.compat.v1.Session() as sess:
             segCount = 0
             predError = collections.deque(maxlen=30)
             print('Video:', vidName)
-			print(vgg16_Features[1,:])
+			print( vgg16_Features[1,:])
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1], feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
