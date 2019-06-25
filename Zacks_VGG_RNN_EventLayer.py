@@ -278,11 +278,12 @@ with tf.compat.v1.Session() as sess:
             segCount = 0
             predError = collections.deque(maxlen=30)
             print('Video:', vidName)
-            print(sess.run (vgg16_Features[1,:]))
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1], feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
+				print (ret[1])
+				print (ret[3])
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
                         lr = 1e-8
