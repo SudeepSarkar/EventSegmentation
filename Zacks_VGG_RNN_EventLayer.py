@@ -161,6 +161,7 @@ else:
 # creates a list of all the file names by concatenating the directory names
 # in vidPath and jsonData and the files therein
 batch = loadData(jsonData, vidPath)
+print(batch)
 tf.compat.v1.reset_default_graph()
 # ----------------------------------------------------- #
 # declaring the variables that will be needed
