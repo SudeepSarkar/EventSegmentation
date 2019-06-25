@@ -209,7 +209,6 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
         net = slim.max_pool2d(net, [2, 2], scope='pool4')
         net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
         net = slim.max_pool2d(net, [2, 2], scope='pool5')
-
         # Use conv2d instead of fully_connected layers.
         net = slim.conv2d(net, 4096, [7, 7], padding=fc_conv_padding, scope='fc6')
         net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
@@ -279,7 +278,7 @@ with tf.compat.v1.Session() as sess:
             segCount = 0
             predError = collections.deque(maxlen=30)
             print('Video:', vidName)
-            print( vgg16_Features[1,:])
+            print(sess.run (vgg16_Features[1,:]))
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1], feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
