@@ -198,7 +198,7 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
     end_points_collection = sc.original_name_scope + '_end_points'
     # Collect outputs for conv2d, fully_connected and max_pool2d.
     with slim.arg_scope([slim.conv2d, slim.fully_connected, slim.max_pool2d],
-                                            outputs_collections=end_points_collection):
+                         outputs_collections=end_points_collection):
         net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope='conv1')
         net = slim.max_pool2d(net, [2, 2], scope='pool1')
         net = slim.repeat(net, 2, slim.conv2d, 128, [3, 3], scope='conv2')
@@ -228,7 +228,7 @@ h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 
 # fc1 = tf.matmul(h_1, W_fc1) + b_fc1
 fc1 = h_1
-print(fc1[0,:].shape, vgg16_Features[1,:].shape)
+print(fc1.shape, vgg16_Features.shape)
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
@@ -242,7 +242,7 @@ train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(s
 ### Training loop ###
 #####################
 
-print(tf.global_variables()) 
+print(tf.global_variables())
 init = tf.compat.v1.global_variables_initializer()
 
 saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
@@ -281,10 +281,11 @@ with tf.compat.v1.Session() as sess:
             print('Video:', vidName)
             for x_train in minibatches:
                 segCount += 1
-                ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1], feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
+                ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1],
+				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
-                print (ret[1])
-                print (ret[3])
+                print ('ret =', ret)
+
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
                         lr = 1e-8
