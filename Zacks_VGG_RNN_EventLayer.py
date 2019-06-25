@@ -244,8 +244,8 @@ train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(s
 
 init = tf.compat.v1.global_variables_initializer()
 
-saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
-with tf.Session() as sess:
+saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKey.GLOBAL_VARIABLES, scope="vgg_16"))
+with tf.compat.v1.Session() as sess:
     # Initialize parameters
     sess.run(init)
     #saver.restore(sess, "./vgg_16.ckpt")
