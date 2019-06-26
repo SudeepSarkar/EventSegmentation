@@ -251,7 +251,7 @@ with tf.compat.v1.Session() as sess:
     sess.run(init)
     #saver.restore(sess, "./vgg_16.ckpt")
     saver = tf.compat.v1.train.Saver(max_to_keep=0)
-	file_writer = tf.summary.FileWriter('./log', sess.graph)
+    file_writer = tf.summary.FileWriter('./log', sess.graph)
     avgPredError = 1.0
 
     ### In case of interruption, load parameters from the last iteration (ex: 29)
