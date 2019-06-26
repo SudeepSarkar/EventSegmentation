@@ -139,7 +139,17 @@ def lstm_cell(W, b, forget_bias, inputs, state):
 
 #     return new_h, new_state
 
-
+def variable_summaries(var):
+    """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
+    with tf.name_scope('summaries'):
+      mean = tf.reduce_mean(var)
+      tf.summary.scalar('mean', mean)
+      with tf.name_scope('stddev'):
+        stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+      tf.summary.scalar('stddev', stddev)
+      tf.summary.scalar('max', tf.reduce_max(var))
+      tf.summary.scalar('min', tf.reduce_min(var))
+tf.summary.histogram('histogram', var)
 #----------------------------------------------------------------
 #    MAIN CODE SECTION
 #jsonData = json.load(open(sys.argv[1]))
@@ -216,6 +226,7 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
                                              scope='dropout6')
         net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
         vgg16_Features = tf.reshape(net, (-1,4096))
+		variable_summaries(vgg16_Features)
         # Convert end_points_collection into a end_point dict.
         end_points = slim.utils.convert_collection_to_dict(end_points_collection)
 
