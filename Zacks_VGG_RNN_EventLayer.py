@@ -1,6 +1,7 @@
 #from __future__ import absolute_import
 #from __future__ import division
 #from __future__ import print_function
+import matplotlib.pyplot as plt
 
 import tensorflow as tf
 #from tensorflow.python.tools import inspect_checkpoint as chkp
@@ -237,7 +238,6 @@ sseLoss = tf.reduce_mean(sseLoss1)
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
 
-
 #####################
 ### Training loop ###
 #####################
@@ -251,6 +251,7 @@ with tf.compat.v1.Session() as sess:
     sess.run(init)
     #saver.restore(sess, "./vgg_16.ckpt")
     saver = tf.compat.v1.train.Saver(max_to_keep=0)
+	file_writer = tf.summary.FileWriter('./log', sess.graph)
     avgPredError = 1.0
 
     ### In case of interruption, load parameters from the last iteration (ex: 29)
