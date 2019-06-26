@@ -245,6 +245,8 @@ sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
+tf.summary.scalar('sseLoss', sseLoss)
+
 
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
