@@ -248,6 +248,7 @@ sseLoss = tf.reduce_mean(sseLoss1)
 tf.summary.scalar('sseLoss', sseLoss)
 
 
+
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
 
@@ -262,8 +263,10 @@ saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphK
 with tf.compat.v1.Session() as sess:
     # Initialize parameters
     sess.run(init)
-    #saver.restore(sess, "./vgg_16.ckpt")
+    saver.restore(sess, "./vgg_16.ckpt")
     saver = tf.compat.v1.train.Saver(max_to_keep=0)
+    # Merge all the summaries and write them
+    merged = tf.summary.merge_all()
     file_writer = tf.summary.FileWriter('./log', sess.graph)
     avgPredError = 1.0
 
@@ -299,6 +302,7 @@ with tf.compat.v1.Session() as sess:
 				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
                 print ('ret =', ret)
+                file_writer.add_summary(ret, 1)
 
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
