@@ -302,7 +302,7 @@ with tf.compat.v1.Session() as sess:
 				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
                 print ('ret =', ret)
-                file_writer.add_summary(ret, 1)
+                #file_writer.add_summary(ret, 1)
 
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
