@@ -201,9 +201,10 @@ curr_state1 = init_state1
 r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
+VGG_inputs = VGG_inputs/255.0
 #tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
-vgg16_Features, end_points = vgg_16(inputs=inputs, is_training=True,
+vgg16_Features, end_points = vgg_16(inputs=VGG_inputs, is_training=True,
                                     dropout_keep_prob=0.8,
                                     scope='vgg_16', fc_conv_padding='VALID')
 
@@ -215,7 +216,6 @@ h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 fc1 = h_1
 #tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
 
-print(fc1.shape, vgg16_Features.shape)
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
