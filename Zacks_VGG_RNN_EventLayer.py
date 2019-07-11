@@ -245,7 +245,7 @@ sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
-
+first_summary = tf.summary.scalar(name='My_first_scalar_summary', tensor=sseLoss)
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
 
@@ -299,6 +299,10 @@ with tf.compat.v1.Session() as sess:
                 new_state = ret[3]
                 print ('ret =', ret)
                 #file_writer.add_summary(ret, 1)
+                # ____step 3:____ evaluate the scalar summary
+                summary = sess.run(first_summary)
+                # ____step 4:____ add the summary to the writer (i.e. to the event file)
+                file_writer.add_summary(summary, segCount)
 
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
