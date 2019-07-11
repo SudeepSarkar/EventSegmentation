@@ -117,13 +117,9 @@ def vgg_16(inputs,
         To use in classification mode, resize input to 224x224.
   Args:
     inputs: a tensor of size [batch_size, height, width, channels].
-    num_classes: number of predicted classes. If 0 or None, the logits layer is
-      omitted and the input features to the logits layer are returned instead.
     is_training: whether or not the model is being trained.
     dropout_keep_prob: the probability that activations are kept in the dropout
       layers during training.
-    spatial_squeeze: whether or not should squeeze the spatial dimensions of the
-      outputs. Useful to remove unnecessary dimensions for classification.
     scope: Optional scope for the variables.
     fc_conv_padding: the type of padding to use for the fully connected layer
       that is implemented as a convolutional layer. Use 'SAME' padding if you
@@ -132,7 +128,7 @@ def vgg_16(inputs,
       Otherwise, the output prediction map will be (input / 32) - 6 in case of
       'VALID' padding.
   Returns:
-    vgg16_features: the output of the layer before the final logits layer
+    outputs: the output of the layer before the final logits layer
     end_points: a dict of tensors with intermediate activations.
   """
   with tf.variable_scope(scope, 'vgg_16', [inputs]) as sc:
@@ -155,10 +151,10 @@ def vgg_16(inputs,
       net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
                          scope='dropout6')
       net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
-      vgg16_features = tf.reshape(net, (-1,4096))
+      outputs = tf.reshape(net, (-1,4096))
       # Convert end_points_collection into a end_point dict.
       end_points = slim.utils.convert_collection_to_dict(end_points_collection)
-      return vgg16_features, end_points
+      return outputs, end_points
 
 #----------------------------------------------------------------
 #    MAIN CODE SECTION
@@ -264,14 +260,11 @@ with tf.compat.v1.Session() as sess:
                 #print ('ret =', ret)
                 # add the summary to the writer (i.e. to the event file)
                 file_writer.add_summary(ret[5], segCount)
-
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
                         lr = 1e-8
                         print('Gating n_steps=', segCount, avgPredError, ret[1])
-                        # predError.clear()
                     else:
-                        # print('NOT Gating n_steps=', segCount, avgPredError, ret[1])
                          lr = 1e-10
                 predError.append(ret[1])
                 avgPredError = np.mean(predError)
