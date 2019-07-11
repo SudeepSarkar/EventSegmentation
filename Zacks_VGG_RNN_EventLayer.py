@@ -73,7 +73,7 @@ def loadMiniBatch(vidFilePath):
             img = img.resize((input_width, input_height), Image.ANTIALIAS)
             img = np.array(img)
             img = img[:, :, ::-1].copy()
-            img = cv2.GaussianBlur(img,(5,5),0)
+#            img = cv2.GaussianBlur(img,(5,5),0)
             im.append(img)
             numFrames += 1
         minibatch.append(np.stack(im))
@@ -118,27 +118,6 @@ def lstm_cell(W, b, forget_bias, inputs, state):
 
     return new_h, new_state
 
-# def lstm_cell_New(W, b, forget_bias, inputs, state):
-#     one = constant_op.constant(1, dtype=dtypes.int32)
-#     add = math_ops.add
-#     multiply = math_ops.multiply
-#     sigmoid = math_ops.sigmoid
-#     activation = math_ops.sigmoid
-#     # activation = math_ops.tanh
-
-#     c, h = array_ops.split(value=state, num_or_size_splits=2, axis=one)
-
-#     gate_inputs = math_ops.matmul(array_ops.concat([inputs, h], 1), W)
-#     gate_inputs = nn_ops.bias_add(gate_inputs, b)
-#     # i = input_gate, j = new_input, f = forget_gate, o = output_gate
-#     i, j = array_ops.split(value=gate_inputs, num_or_size_splits=2, axis=one)
-
-#     new_c = add(c, multiply(i, activation(j)))
-#     new_h = activation(new_c)
-#     new_state = array_ops.concat([new_c, new_h], 1)
-
-#     return new_h, new_state
-
 def variable_summaries(var):
     """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
     with tf.name_scope('summaries'):
@@ -180,21 +159,15 @@ inputs = tf.compat.v1.placeholder(tf.float32, (None, 224, 224, 3), name='inputs'
 learning_rate = tf.compat.v1.placeholder(tf.float32, [])
 is_training = tf.compat.v1.placeholder(tf.bool)
 
-# Setup RNN
-# init_state1 = tf.compat.v1.placeholder(tf.float32, [1, n_hidden1])
-# W_RNN1 = vs.get_variable("W1", shape=[feature_size+n_hidden1, n_hidden1])
-# b_RNN1 = vs.get_variable("b1", shape=[n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
-# curr_state1 = init_state1
-
 # Setup LSTM
 init_state1 = tf.compat.v1.placeholder(tf.float32, [1, 2*n_hidden1], name="State")
 W_lstm1 = vs.get_variable("W1", shape=[feature_size + n_hidden1, 4*n_hidden1])
 b_lstm1 = vs.get_variable("b1", shape=[4*n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
-# curr_state1 = broadcast(init_state1, [tf.shape(xs)[0], 2*n_hidden1])
 curr_state1 = init_state1
+variable_summaries(W_lstm1)
+variable_summaries(b_lstm1)
 
-W_fc1 = tf.Variable(tf.random.truncated_normal([n_hidden1, feature_size], stddev=0.1))
-b_fc1 = tf.Variable(tf.constant(0.1, shape=[feature_size]))
+
 # ----------------------------------------------------- #
 #             SETTING UP VGG
 scope = 'vgg_16'
@@ -232,13 +205,9 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
 
-# RNN
-# h_1, curr_state1 = RNNCell(W_RNN1, b_RNN1, RNN_inputs, curr_state1)
-
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 
-# fc1 = tf.matmul(h_1, W_fc1) + b_fc1
 fc1 = h_1
 print(fc1.shape, vgg16_Features.shape)
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
