@@ -208,8 +208,9 @@ VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]
 
 #tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
-net, end_points, vgg16_Features = vgg_16(inputs=VGG_inputs, is_training=True, dropout_keep_prob=0.8,
-                                         scope='vgg_16', fc_conv_padding='VALID'):
+net, end_points, vgg16_Features = vgg_16(inputs=VGG_inputs, is_training=True,
+                                         dropout_keep_prob=0.8,
+                                         scope='vgg_16', fc_conv_padding='VALID')
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
 #tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
