@@ -176,8 +176,7 @@ r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
 
-tf.summary.image(name='Input Image', tensor= VGG_inputs)
-
+#tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
 with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
     end_points_collection = sc.original_name_scope + '_end_points'
@@ -237,16 +236,6 @@ with tf.compat.v1.Session() as sess:
     # Merge all the summaries and write them
     file_writer = tf.summary.FileWriter('./log', sess.graph)
     avgPredError = 1.0
-
-    ### In case of interruption, load parameters from the last iteration (ex: 29)
-    #saver.restore(sess, './model_stacked_lstm_29')
-    ### And update the loop to account for the previous iterations
-    #for i in range(29,n_epochs):
-    step = 0
-
-    # RNN
-    # new_state = np.random.uniform(-0.5,high=0.5,size=(1,n_hidden1))
-
     # LSTM
     new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
     for i in range(n_epochs):
@@ -255,8 +244,6 @@ with tf.compat.v1.Session() as sess:
 		#shuffle the sequences
         shuffle(batch)
         for miniBatchPath in batch:
-            # RNN
-            # new_state = np.random.uniform(-0.5,high=0.5,size=(1,n_hidden1))
             # LSTM
             new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
             avgPredError = 0
@@ -270,7 +257,7 @@ with tf.compat.v1.Session() as sess:
 				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
                 print ('ret =', ret)
-                # ____step 4:____ add the summary to the writer (i.e. to the event file)
+                # add the summary to the writer (i.e. to the event file)
                 file_writer.add_summary(ret[5], segCount)
 
                 if activeLearning:
@@ -283,9 +270,6 @@ with tf.compat.v1.Session() as sess:
                          lr = 1e-10
                 predError.append(ret[1])
                 avgPredError = np.mean(predError)
-        #     print('Video:', vidName)
-        #     break
-        # break
-
+                
         path = modelPath + str(i+1)
         save_path = saver.save(sess, path)
