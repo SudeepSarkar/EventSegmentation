@@ -79,22 +79,6 @@ def loadMiniBatch(vidFilePath):
         minibatch.append(np.stack(im))
     return vidFilePath, minibatch
 
-def broadcast(tensor, shape):
-    return tensor + tf.zeros(shape, dtype=tensor.dtype)
-
-#def RNNCell(W, B, inputs, state):
-#    """Most basic RNN: output = new_state = act(W * input + U * state + B)."""
-#    one = constant_op.constant(1, dtype=dtypes.int32)
-#    add = math_ops.add
-#    multiply = math_ops.multiply
-#    sigmoid = math_ops.sigmoid
-#    activation = math_ops.tanh
-#
-#    gate_inputs = math_ops.matmul(array_ops.concat([inputs, state], 1), W)
-#    gate_inputs = nn_ops.bias_add(gate_inputs, B)
-#    output = sigmoid(gate_inputs)
-#    return output, output
-
 def lstm_cell(W, b, forget_bias, inputs, state):
     one = constant_op.constant(1, dtype=dtypes.int32)
     add = math_ops.add
@@ -118,17 +102,66 @@ def lstm_cell(W, b, forget_bias, inputs, state):
 
     return new_h, new_state
 
-def variable_summaries(var):
-    """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
-    with tf.name_scope('summaries'):
-      mean = tf.reduce_mean(var)
-      tf.summary.scalar('mean', mean)
-      with tf.name_scope('stddev'):
-        stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
-      tf.summary.scalar('stddev', stddev)
-      tf.summary.scalar('max', tf.reduce_max(var))
-      tf.summary.scalar('min', tf.reduce_min(var))
-      tf.summary.histogram('histogram', var)
+# The following vgg_16 adapted from
+# https://github.com/tensorflow/models/blob/master/research/slim/nets/vgg.py
+def vgg_16(inputs,
+           is_training=True,
+           dropout_keep_prob=0.5,
+           scope='vgg_16',
+           fc_conv_padding='VALID'):
+  """Oxford Net VGG 16-Layers version D Example.
+  Note: All the fully_connected layers have been transformed to conv2d layers.
+        To use in classification mode, resize input to 224x224.
+  Args:
+    inputs: a tensor of size [batch_size, height, width, channels].
+    num_classes: number of predicted classes. If 0 or None, the logits layer is
+      omitted and the input features to the logits layer are returned instead.
+    is_training: whether or not the model is being trained.
+    dropout_keep_prob: the probability that activations are kept in the dropout
+      layers during training.
+    spatial_squeeze: whether or not should squeeze the spatial dimensions of the
+      outputs. Useful to remove unnecessary dimensions for classification.
+    scope: Optional scope for the variables.
+    fc_conv_padding: the type of padding to use for the fully connected layer
+      that is implemented as a convolutional layer. Use 'SAME' padding if you
+      are applying the network in a fully convolutional manner and want to
+      get a prediction map downsampled by a factor of 32 as an output.
+      Otherwise, the output prediction map will be (input / 32) - 6 in case of
+      'VALID' padding.
+    global_pool: Optional boolean flag. If True, the input to the classification
+      layer is avgpooled to size 1x1, for any input size. (This is not part
+      of the original VGG architecture.)
+  Returns:
+    net: the output of the logits layer (if num_classes is a non-zero integer),
+      or the input to the logits layer (if num_classes is 0 or None).
+    end_points: a dict of tensors with intermediate activations.
+  """
+  with tf.variable_scope(scope, 'vgg_16', [inputs]) as sc:
+    end_points_collection = sc.original_name_scope + '_end_points'
+    # Collect outputs for conv2d, fully_connected and max_pool2d.
+    with slim.arg_scope([slim.conv2d, slim.fully_connected, slim.max_pool2d],
+                        outputs_collections=end_points_collection):
+      net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope='conv1')
+      net = slim.max_pool2d(net, [2, 2], scope='pool1')
+      net = slim.repeat(net, 2, slim.conv2d, 128, [3, 3], scope='conv2')
+      net = slim.max_pool2d(net, [2, 2], scope='pool2')
+      net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
+      net = slim.max_pool2d(net, [2, 2], scope='pool3')
+      net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
+      net = slim.max_pool2d(net, [2, 2], scope='pool4')
+      net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
+      net = slim.max_pool2d(net, [2, 2], scope='pool5')
+
+      # Use conv2d instead of fully_connected layers.
+      net = slim.conv2d(net, 4096, [7, 7], padding=fc_conv_padding, scope='fc6')
+      net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
+                         scope='dropout6')
+      net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
+      vgg16_features = tf.reshape(net, (-1,4096))
+      # Convert end_points_collection into a end_point dict.
+      end_points = slim.utils.convert_collection_to_dict(end_points_collection)
+return net, end_points, vgg16_features
+
 #----------------------------------------------------------------
 #    MAIN CODE SECTION
 #jsonData = json.load(open(sys.argv[1]))
@@ -165,12 +198,9 @@ W_lstm1 = vs.get_variable("W1", shape=[feature_size + n_hidden1, 4*n_hidden1])
 b_lstm1 = vs.get_variable("b1", shape=[4*n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
 curr_state1 = init_state1
 
-
 # ----------------------------------------------------- #
 #             SETTING UP VGG
-scope = 'vgg_16'
-fc_conv_padding = 'VALID'
-dropout_keep_prob = 0.8
+
 
 r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
@@ -178,30 +208,8 @@ VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]
 
 #tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
-with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
-    end_points_collection = sc.original_name_scope + '_end_points'
-    # Collect outputs for conv2d, fully_connected and max_pool2d.
-    with slim.arg_scope([slim.conv2d, slim.fully_connected, slim.max_pool2d],
-                         outputs_collections=end_points_collection):
-        net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope='conv1')
-        net = slim.max_pool2d(net, [2, 2], scope='pool1')
-        net = slim.repeat(net, 2, slim.conv2d, 128, [3, 3], scope='conv2')
-        net = slim.max_pool2d(net, [2, 2], scope='pool2')
-        net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
-        net = slim.max_pool2d(net, [2, 2], scope='pool3')
-        net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
-        net = slim.max_pool2d(net, [2, 2], scope='pool4')
-        net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
-        net = slim.max_pool2d(net, [2, 2], scope='pool5')
-        # Use conv2d instead of fully_connected layers.
-        net = slim.conv2d(net, 4096, [7, 7], padding=fc_conv_padding, scope='fc6')
-        net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
-                                             scope='dropout6')
-        net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
-        vgg16_Features = tf.reshape(net, (-1,4096))
-#        variable_summaries(vgg16_Features)
-        # Convert end_points_collection into a end_point dict.
-        end_points = slim.utils.convert_collection_to_dict(end_points_collection)
+net, end_points, vgg16_Features = vgg_16(inputs=VGG_inputs, is_training=True, dropout_keep_prob=0.8,
+                                         scope='vgg_16', fc_conv_padding='VALID'):
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
 #tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
