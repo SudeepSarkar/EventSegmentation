@@ -204,12 +204,12 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
         end_points = slim.utils.convert_collection_to_dict(end_points_collection)
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
-tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
+#tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
 
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 fc1 = h_1
-tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
+#tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
 
 print(fc1.shape, vgg16_Features.shape)
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
@@ -258,7 +258,7 @@ with tf.compat.v1.Session() as sess:
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1, merged],
 				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
-                print ('ret =', ret)
+                #print ('ret =', ret)
                 # add the summary to the writer (i.e. to the event file)
                 file_writer.add_summary(ret[5], segCount)
 
