@@ -176,7 +176,7 @@ r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
 
-tf.summary.image(name='Input Image', tensor= tf.expand_dims(VGG_inputs, axis=0))
+tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
 
 with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
