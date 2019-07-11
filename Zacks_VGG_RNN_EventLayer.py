@@ -204,7 +204,7 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
         end_points = slim.utils.convert_collection_to_dict(end_points_collection)
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
-tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (64, 64)))
+tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
 
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
