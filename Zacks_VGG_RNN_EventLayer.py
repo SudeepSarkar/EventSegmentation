@@ -203,7 +203,7 @@ VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
 #tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
-vgg16_Features, end_points = vgg_16(inputs=VGG_inputs, is_training=True,
+vgg16_Features, end_points = vgg_16(inputs=inputs, is_training=True,
                                     dropout_keep_prob=0.8,
                                     scope='vgg_16', fc_conv_padding='VALID')
 
