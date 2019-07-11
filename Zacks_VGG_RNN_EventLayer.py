@@ -245,7 +245,7 @@ sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
-first_summary = tf.summary.scalar(name='My_first_scalar_summary', tensor=sseLoss)
+tf.summary.scalar(name='SSE loss', tensor=sseLoss)
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
 
@@ -255,6 +255,8 @@ train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(s
 
 print(tf.global_variables())
 init = tf.compat.v1.global_variables_initializer()
+
+merged = tf.summary.merge_all()
 
 saver = tf.compat.v1.train.Saver(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="vgg_16"))
 with tf.compat.v1.Session() as sess:
@@ -294,15 +296,12 @@ with tf.compat.v1.Session() as sess:
             print('Video:', vidName)
             for x_train in minibatches:
                 segCount += 1
-                ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1],
+                ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1, merged],
 				                feed_dict = {inputs: x_train, is_training: True, init_state1: new_state, learning_rate:lr})
                 new_state = ret[3]
                 print ('ret =', ret)
-                #file_writer.add_summary(ret, 1)
-                # ____step 3:____ evaluate the scalar summary
-                summary = sess.run(first_summary)
                 # ____step 4:____ add the summary to the writer (i.e. to the event file)
-                file_writer.add_summary(summary, segCount)
+                file_writer.add_summary(ret[5], segCount)
 
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
