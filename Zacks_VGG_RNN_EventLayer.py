@@ -164,8 +164,6 @@ init_state1 = tf.compat.v1.placeholder(tf.float32, [1, 2*n_hidden1], name="State
 W_lstm1 = vs.get_variable("W1", shape=[feature_size + n_hidden1, 4*n_hidden1])
 b_lstm1 = vs.get_variable("b1", shape=[4*n_hidden1], initializer=init_ops.zeros_initializer(dtype=tf.float32))
 curr_state1 = init_state1
-variable_summaries(W_lstm1)
-variable_summaries(b_lstm1)
 
 
 # ----------------------------------------------------- #
@@ -177,6 +175,9 @@ dropout_keep_prob = 0.8
 r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs * 255.0)
 VGG_MEAN = [103.939, 116.779, 123.68]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
+
+tf.summary.image(name='Input Image', tensor= np.reshape(VGG_inputs, (-1, VGG_inputs.shape))
+
 
 with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
     end_points_collection = sc.original_name_scope + '_end_points'
