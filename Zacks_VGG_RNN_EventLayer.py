@@ -199,7 +199,7 @@ with tf.compat.v1.variable_scope(scope, 'vgg_16', [VGG_inputs]) as sc:
                                              scope='dropout6')
         net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
         vgg16_Features = tf.reshape(net, (-1,4096))
-        tf.summary.image(name='VGG output', tensor= tf.reshape(net, (64, 64)))
+        tf.summary.image(name='VGG output', tensor= tf.reshape(vgg16_Features, (64, 64)))
 #        variable_summaries(vgg16_Features)
         # Convert end_points_collection into a end_point dict.
         end_points = slim.utils.convert_collection_to_dict(end_points_collection)
