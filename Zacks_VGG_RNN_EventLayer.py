@@ -199,7 +199,7 @@ curr_state1 = init_state1
 # ----------------------------------------------------- #
 #             SETTING UP VGG
 r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs)
-VGG_MEAN = [103.939, 116.779, 123.68]/255
+VGG_MEAN = [103.939, 116.779, 123.68]/255.0
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
 #tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
