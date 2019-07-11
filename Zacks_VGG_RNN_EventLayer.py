@@ -208,8 +208,9 @@ tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 
 
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
-
 fc1 = h_1
+tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
+
 print(fc1.shape, vgg16_Features.shape)
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
