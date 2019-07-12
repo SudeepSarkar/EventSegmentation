@@ -211,14 +211,16 @@ h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 fc1 = h_1
 tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
 
-#sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
-sseLoss1 = tf.abs(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
+sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
+#absLoss1 = tf.abs(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
 tf.summary.scalar(name='SSE loss', tensor=sseLoss)
+
+L1regularizedLoss = tf.add(sseLoss, 0.1*tf.abs(fc1[0,:]))
 # Optimization
-train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(sseLoss)
+train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(L1regularizedLoss)
 
 #####################
 ### Training loop ###
