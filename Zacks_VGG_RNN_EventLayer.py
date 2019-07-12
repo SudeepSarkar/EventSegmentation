@@ -246,7 +246,6 @@ with tf.compat.v1.Session() as sess:
     saver = tf.compat.v1.train.Saver(max_to_keep=0)
     # Merge all the summaries and write them
     file_writer = tf.summary.FileWriter('./log', sess.graph)
-    avgPredError = 1.0
     # LSTM
     new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
     for i in range(n_epochs):
@@ -257,11 +256,11 @@ with tf.compat.v1.Session() as sess:
         print ('batch=', batch)
         for miniBatchPath in batch:
             # LSTM
-            avgPredError = 0
+            avgPredError = 1.0
             vidName, minibatches = loadMiniBatch(miniBatchPath)
             predError = collections.deque(maxlen=30)
-            print('Video:', vidName, segCount)
             gt_boundary = segCount
+            print('Video:', vidName, segCount, gt_boundary)
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1, merged],
