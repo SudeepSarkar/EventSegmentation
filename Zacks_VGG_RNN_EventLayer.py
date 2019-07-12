@@ -248,7 +248,6 @@ with tf.compat.v1.Session() as sess:
             # LSTM
             avgPredError = 0
             vidName, minibatches = loadMiniBatch(miniBatchPath)
-            print ('minibatch=', minibatches)
             predError = collections.deque(maxlen=30)
             print('Video:', vidName)
             for x_train in minibatches:
