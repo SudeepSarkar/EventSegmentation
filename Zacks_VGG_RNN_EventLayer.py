@@ -158,18 +158,19 @@ def vgg_16(inputs,
 
 #----------------------------------------------------------------
 #    MAIN CODE SECTION
-#jsonData = json.load(open(sys.argv[1]))
-#vidPath = sys.argv[2]
-#modelPath = sys.argv[3]
-#activeLearningInput = sys.argv[4]
 
 #python Zacks_VGG_RNN.py <jsonData path> <video frames root directory> <path to restore model> <output file name to write loss characteristics> ```
 
-jsonData = json.load(open('frameNames.json'), object_pairs_hook=OrderedDict)
+#jsonData = json.load(open('frameNames.json'), object_pairs_hook=OrderedDict)
 #vidPath = 'newCaledonia'
-vidPath = '/content/drive/My Drive/Colab Notebooks/data/newCaledoniaFrames/'
-modelPath = 'model'
-activeLearningInput = 1
+#vidPath = '/content/drive/My Drive/Colab Notebooks/data/newCaledoniaFrames/'
+#modelPath = 'model'
+#activeLearningInput = 1
+jsonData = json.load(open(sys.argv[1]), object_pairs_hook=OrderedDict)
+vidPath = sys.argv[2]
+modelPath = sys.argv[3]
+activeLearningInput = sys.argv[4]
+
 
 if activeLearningInput == "1":
     activeLearning = True
