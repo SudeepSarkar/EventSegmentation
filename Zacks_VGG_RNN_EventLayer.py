@@ -215,7 +215,7 @@ mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
 
-L1regularizedLoss = tf.add(sseLoss, 0.1*tf.abs(fc1[0,:]))
+L1regularizedLoss = tf.add(sseLoss, 0.1*tf.reduce_mean(tf.abs(fc1[0,:])))
 
 tf.summary.scalar(name='gt_boundaries', tensor= gt_boundary)
 tf.summary.scalar(name='learning rate', tensor= learning_rate)
