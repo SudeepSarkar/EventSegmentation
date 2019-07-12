@@ -269,8 +269,8 @@ with tf.compat.v1.Session() as sess:
                 new_state = ret[3]
                 #print ('ret =', ret)
                 # add the summary to the writer (i.e. to the event file)
-                if segCount % 5 == 0:
-                    file_writer.add_summary(ret[5], segCount)
+                #if segCount % 2 == 0:
+                file_writer.add_summary(ret[5], segCount)
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
                         lr = 1e-8
