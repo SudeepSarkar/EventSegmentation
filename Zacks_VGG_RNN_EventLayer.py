@@ -196,14 +196,14 @@ curr_state1 = init_state1
 r, g, b = tf.split(axis=3, num_or_size_splits=3, value=inputs)
 VGG_MEAN = [103.939/255.0, 116.779/255.0, 123.68/255.0]
 VGG_inputs = tf.concat(values=[b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
-#tf.summary.image(name='Input Image', tensor= VGG_inputs)
+tf.summary.image(name='Input Image', tensor= VGG_inputs)
 
 vgg16_Features, end_points = vgg_16(inputs=VGG_inputs, is_training=True,
                                     dropout_keep_prob=0.8,
                                     scope='vgg_16', fc_conv_padding='VALID')
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
-#tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
+tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
 
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
@@ -257,7 +257,8 @@ with tf.compat.v1.Session() as sess:
                 new_state = ret[3]
                 #print ('ret =', ret)
                 # add the summary to the writer (i.e. to the event file)
-                file_writer.add_summary(ret[5], segCount)
+                if segCount % 10 == 0:
+                    file_writer.add_summary(ret[5], segCount)
                 if activeLearning:
                     if ret[1]/avgPredError > 1.5:
                         lr = 1e-8
