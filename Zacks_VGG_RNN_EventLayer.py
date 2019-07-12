@@ -249,7 +249,7 @@ with tf.compat.v1.Session() as sess:
             avgPredError = 0
             vidName, minibatches = loadMiniBatch(miniBatchPath)
             predError = collections.deque(maxlen=30)
-            print('Video:', vidName)
+            print('Video:', vidName, segCount)
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1, merged],
