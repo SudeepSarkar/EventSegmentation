@@ -22,7 +22,7 @@ from PIL import Image
 import sys
 import json
 import collections, cv2
-
+from collections import OrderedDict
 
 input_width = 224
 input_height = 224
@@ -165,7 +165,7 @@ def vgg_16(inputs,
 
 #python Zacks_VGG_RNN.py <jsonData path> <video frames root directory> <path to restore model> <output file name to write loss characteristics> ```
 
-jsonData = json.load(open('frameNames.json'))
+jsonData = json.load(open('frameNames.json'), object_pairs_hook=OrderedDict)
 vidPath = 'newCaledonia'
 modelPath = 'model'
 activeLearningInput = 1
