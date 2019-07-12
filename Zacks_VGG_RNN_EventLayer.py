@@ -165,7 +165,7 @@ def vgg_16(inputs,
 
 #python Zacks_VGG_RNN.py <jsonData path> <video frames root directory> <path to restore model> <output file name to write loss characteristics> ```
 
-jsonData = json.load(open('frameNames.json'), object_pairs_hook=OrderedDict)
+jsonData = json.load(open('frameNames2.json'), object_pairs_hook=OrderedDict)
 #vidPath = 'newCaledonia'
 vidPath = '/content/drive/My Drive/Colab Notebooks/data/newCaledoniaFrames/'
 modelPath = 'model'
