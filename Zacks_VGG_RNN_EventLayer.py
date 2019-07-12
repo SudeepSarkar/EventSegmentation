@@ -167,6 +167,7 @@ def vgg_16(inputs,
 #modelPath = 'model'
 #activeLearningInput = 1
 jsonData = json.load(open(sys.argv[1]), object_pairs_hook=OrderedDict)
+# OrderedDict loads the jason data in the order they are specified in the file
 vidPath = sys.argv[2]
 modelPath = sys.argv[3]
 activeLearningInput = sys.argv[4]
