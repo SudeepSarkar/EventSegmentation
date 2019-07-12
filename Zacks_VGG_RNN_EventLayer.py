@@ -185,6 +185,7 @@ tf.compat.v1.reset_default_graph()
 inputs = tf.compat.v1.placeholder(tf.float32, (None, 224, 224, 3), name='inputs')
 learning_rate = tf.compat.v1.placeholder(tf.float32, [])
 is_training = tf.compat.v1.placeholder(tf.bool)
+gt_boundary = tf.compat.v1.placeholder(tf.float32, [], name='gt')
 
 # Setup LSTM
 init_state1 = tf.compat.v1.placeholder(tf.float32, [1, 2*n_hidden1], name="State")
@@ -204,21 +205,24 @@ vgg16_Features, end_points = vgg_16(inputs=VGG_inputs, is_training=True,
                                     scope='vgg_16', fc_conv_padding='VALID')
 
 RNN_inputs = tf.reshape(vgg16_Features[0,:], (-1, feature_size))
-tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
 
 # LSTM
 h_1, curr_state1 = lstm_cell(W_lstm1, b_lstm1, 1.0, RNN_inputs, curr_state1)
 fc1 = h_1
-tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
 
 sseLoss1 = tf.square(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
-#absLoss1 = tf.abs(tf.subtract(fc1[0,:], vgg16_Features[1,:]))
 mask = tf.greater(sseLoss1, learnError * tf.ones_like(sseLoss1))
 sseLoss1 = tf.multiply(sseLoss1, tf.cast(mask, tf.float32))
 sseLoss = tf.reduce_mean(sseLoss1)
-tf.summary.scalar(name='SSE loss', tensor=sseLoss)
 
 L1regularizedLoss = tf.add(sseLoss, 0.1*tf.abs(fc1[0,:]))
+
+tf.summary.image(name='gt_boundaries', tensor= gt_boundary)
+tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
+tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
+tf.summary.scalar(name='SSE loss', tensor=sseLoss)
+tf.summary.scalar(name='L1 regulatized SSE loss', tensor=L1regularizedLoss)
+
 # Optimization
 train_op = tf.compat.v1.train.GradientDescentOptimizer(learning_rate).minimize(L1regularizedLoss)
 
@@ -254,6 +258,7 @@ with tf.compat.v1.Session() as sess:
             vidName, minibatches = loadMiniBatch(miniBatchPath)
             predError = collections.deque(maxlen=30)
             print('Video:', vidName, segCount)
+            gt_boundary = segCount
             for x_train in minibatches:
                 segCount += 1
                 ret = sess.run([train_op, sseLoss, sseLoss1, curr_state1, fc1, merged],
