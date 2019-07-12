@@ -178,7 +178,6 @@ else:
 # creates a list of all the file names by concatenating the directory names
 # in vidPath and jsonData and the files therein
 batch = loadData(jsonData, vidPath)
-print(batch)
 tf.compat.v1.reset_default_graph()
 # ----------------------------------------------------- #
 # declaring the variables that will be needed
@@ -242,14 +241,14 @@ with tf.compat.v1.Session() as sess:
     for i in range(n_epochs):
         # Run 1 epoch
         loss = []
-		#shuffle the sequences
-        shuffle(batch)
+        new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
+        segCount = 0
+        print ('batch=', batch)
         for miniBatchPath in batch:
             # LSTM
-            new_state = np.random.uniform(-0.5,high=0.5,size=(1,2*n_hidden1))
             avgPredError = 0
             vidName, minibatches = loadMiniBatch(miniBatchPath)
-            segCount = 0
+            print ('minibatch=', minibatches)
             predError = collections.deque(maxlen=30)
             print('Video:', vidName)
             for x_train in minibatches:
