@@ -217,7 +217,8 @@ sseLoss = tf.reduce_mean(sseLoss1)
 
 L1regularizedLoss = tf.add(sseLoss, 0.1*tf.abs(fc1[0,:]))
 
-tf.summary.image(name='gt_boundaries', tensor= gt_boundary)
+tf.summary.scalar(name='gt_boundaries', tensor= gt_boundary)
+tf.summary.scalar(name='learning rate', tensor= learning_rate)
 tf.summary.image(name='VGG output', tensor= tf.reshape(RNN_inputs, (-1, 64, 64, 1)))
 tf.summary.image(name='LSTM output', tensor= tf.reshape(fc1, (-1, 64, 64, 1)))
 tf.summary.scalar(name='SSE loss', tensor=sseLoss)
