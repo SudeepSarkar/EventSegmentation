@@ -167,7 +167,7 @@ def vgg_16(inputs,
 
 jsonData = json.load(open('frameNames.json'), object_pairs_hook=OrderedDict)
 #vidPath = 'newCaledonia'
-vidPath = '/content/drive/My\ Drive/Colab\ Notebooks/data/newCalendoniaFrames/'
+vidPath = '/content/drive/My Drive/Colab Notebooks/data/newCalendoniaFrames/'
 modelPath = 'model'
 activeLearningInput = 1
 
