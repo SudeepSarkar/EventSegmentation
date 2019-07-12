@@ -186,7 +186,7 @@ inputs = tf.compat.v1.placeholder(tf.float32, (None, 224, 224, 3), name='inputs'
 learning_rate = tf.compat.v1.placeholder(tf.float32, [])
 is_training = tf.compat.v1.placeholder(tf.bool)
 gt_boundary = tf.compat.v1.placeholder(tf.float32, [], name='gt')
-
+gt_boundary = 0
 # Setup LSTM
 init_state1 = tf.compat.v1.placeholder(tf.float32, [1, 2*n_hidden1], name="State")
 W_lstm1 = vs.get_variable("W1", shape=[feature_size + n_hidden1, 4*n_hidden1])
